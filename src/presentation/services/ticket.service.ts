@@ -4,7 +4,7 @@ import { Ticket } from "../../domain/interfaces/ticket";
 export class TicketService {
   //Conexion a db example
 
-  private readonly tickets: Ticket[] = [
+  public readonly tickets: Ticket[] = [
     { id: UuidAdapter.v4(), number: 1, createdAt: new Date(), done: false },
     { id: UuidAdapter.v4(), number: 2, createdAt: new Date(), done: false },
     { id: UuidAdapter.v4(), number: 3, createdAt: new Date(), done: false },
@@ -13,19 +13,25 @@ export class TicketService {
     { id: UuidAdapter.v4(), number: 6, createdAt: new Date(), done: false },
   ];
 
+  private readonly workingOnTickets: Ticket[] = [];
+
   public get pendingTickets(): Ticket[] {
     return this.tickets.filter((ticket) => !ticket.handleAtDesk);
   }
 
-  public lastTicketNumber(): number {
-    //Obtener ultimo numero
+  public get lastWorkingOnTickets(): Ticket[] {
+    return this.workingOnTickets.splice(0, 4);
+  }
+
+  public get lastTicketNumber(): number {
+    //* Obtener ultimo numero
     return this.tickets.length > 0 ? this.tickets.at(-1)!.number : 0;
   }
 
   public createTicket() {
     const ticket: Ticket = {
       id: UuidAdapter.v4(),
-      number: this.lastTicketNumber(),
+      number: this.lastTicketNumber + 1,
       createdAt: new Date(),
       done: false,
     };
@@ -43,6 +49,7 @@ export class TicketService {
     ticket.handleAtDesk = desk;
     ticket.handleAt = new Date();
 
+    this.workingOnTickets.unshift({ ...ticket });
     //todo; notificar ws
 
     return { status: "ok", ticket };
@@ -52,6 +59,7 @@ export class TicketService {
     const ticket = this.tickets.find((ticket) => ticket.id === id);
     if (!ticket) return { status: "error", message: "No se encontró ticket" };
 
+    //* Recomendacion: no trabajar con referencia, actualizar directamente el dato como abajo
     this.tickets.map((ticket) => {
       if (ticket.id === id) {
         ticket.done = true;
@@ -62,7 +70,5 @@ export class TicketService {
     return { status: "ok", ticket };
   }
 
-  public workingOn() {
-
-  }
+  public workingOn() {}
 }
