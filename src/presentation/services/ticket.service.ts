@@ -1,7 +1,9 @@
 import { UuidAdapter } from "../../config/uuid.adapter";
 import { Ticket } from "../../domain/interfaces/ticket";
+import { WssService } from "./wss.service";
 
 export class TicketService {
+  constructor(private readonly wssService = WssService.instance) {}
   //Conexion a db example
 
   public readonly tickets: Ticket[] = [
@@ -38,6 +40,7 @@ export class TicketService {
 
     this.tickets.push(ticket);
     //todo: ws
+    this.onTicketNumberChanged();
     return ticket;
   }
 
@@ -70,5 +73,10 @@ export class TicketService {
     return { status: "ok", ticket };
   }
 
-  public workingOn() {}
+  private onTicketNumberChanged() {
+    this.wssService.sendMessage(
+      "on-ticket-count-change",
+      this.pendingTickets.length
+    );
+  }
 }
