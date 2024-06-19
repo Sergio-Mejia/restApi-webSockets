@@ -39,7 +39,7 @@ export class TicketService {
     };
 
     this.tickets.push(ticket);
-    //todo: ws
+    //* ws
     this.onTicketNumberChanged();
     return ticket;
   }
@@ -53,7 +53,7 @@ export class TicketService {
     ticket.handleAt = new Date();
 
     this.workingOnTickets.unshift({ ...ticket });
-    //todo; notificar ws
+    //* notificar ws
     this.onTicketNumberChanged();
 
     return { status: "ok", ticket };
