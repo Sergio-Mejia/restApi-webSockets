@@ -6,7 +6,7 @@ export class TicketService {
   constructor(private readonly wssService = WssService.instance) {}
   //Conexion a db example
 
-  public readonly tickets: Ticket[] = [
+  public tickets: Ticket[] = [
     { id: UuidAdapter.v4(), number: 1, createdAt: new Date(), done: false },
     { id: UuidAdapter.v4(), number: 2, createdAt: new Date(), done: false },
     { id: UuidAdapter.v4(), number: 3, createdAt: new Date(), done: false },
@@ -22,7 +22,7 @@ export class TicketService {
   }
 
   public get lastWorkingOnTickets(): Ticket[] {
-    return this.workingOnTickets.splice(0, 4);
+    return this.workingOnTickets.slice(0, 4);
   }
 
   public get lastTicketNumber(): number {
