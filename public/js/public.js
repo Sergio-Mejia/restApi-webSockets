@@ -23,4 +23,25 @@ async function workingOn() {
   renderTickets(tickets);
 }
 
+function connectToWebSockets() {
+    const socket = new WebSocket("ws://localhost:3000/ws");
+  
+    socket.onmessage = (event) => {
+      const { payload, type } = JSON.parse(event.data);
+      if (type !== "on-working-change") return;
+      renderTickets(payload);
+    };
+  
+    socket.onclose = (event) => {
+      setTimeout(() => {
+        connectToWebSockets();
+      }, 1500);
+    };
+  
+    socket.onopen = (event) => {
+      console.log("Connected");
+    };
+  }
+
 workingOn();
+connectToWebSockets();
